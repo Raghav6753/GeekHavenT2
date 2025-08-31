@@ -1,103 +1,71 @@
-import React, { useState, useEffect } from "react";
+
 import { useProducts } from "../context/ProductsContext";
-import { ArrowLeft, Heart, ShoppingCart, Star, MessageCircle, Shield, Truck, RotateCcw } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
-import "./product.css";
+import React, { useState, useEffect } from "react";
+import { ArrowLeft, Heart, Star, MessageCircle, Truck, Shield, RotateCcw, ShoppingCart } from "lucide-react";
+import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
+import "./product.css"
+export default function ProductDetailPage({ setCartOpen, onAddToWishlist }) {
+	const { products, loading, error } = useProducts();
+	const { id: productId } = useParams();
+	const navigate = useNavigate();
+	const { addToCart, clearCart } = useCart();
+	const [product, setProduct] = useState(null);
+	const [selectedImage, setSelectedImage] = useState(0);
+	const [activeTab, setActiveTab] = useState("description");
+		const { wishlistItems } = useWishlist();
+		const isLiked = wishlistItems?.some(item => item.id === product?.id || item._id === product?._id);
 
-	 const { products, loading, error } = useProducts();
-	 const { id: productId } = useParams();
-	 const navigate = useNavigate();
-	 const [product, setProduct] = useState(null);
-	 const [selectedImage, setSelectedImage] = useState(0);
-	 const [activeTab, setActiveTab] = useState("description");
-	 const isLiked = wishlistItems?.some(item => item.id === product?.id || item._id === product?._id);
+	useEffect(() => {
+		const productData = products.find((p) => p.id === productId || p._id === productId);
+		if (productData) {
+			setProduct(productData);
+		}
+	}, [productId, products]);
 
-	 useEffect(() => {
-		 const productData = products.find((p) => p.id === productId || p._id === productId);
-		 if (productData) {
-			 setProduct(productData);
-		 }
-	 }, [productId, products]);
+	if (!product) {
+		return (
+			<div className="product-page-container">
+				<div className="product-not-found">
+					<h1 className="not-found-title">Product not found</h1>
+				</div>
+			</div>
+		);
+	}
 
-	 // Fix: Ensure return is inside the function body
-	 if (!product) {
-		 return (
-			 <div className="product-page-container">
-				 <div className="product-not-found">
-					 <h1 className="not-found-title">Product not found</h1>
-				 </div>
-			 </div>
-		 );
-	 }
+	const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
 
-  const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+	const handleAddToCart = () => {
+		addToCart(product);
+		if (setCartOpen) setCartOpen(true);
+	};
 
-  const handleAddToCart = () => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      } else {
-        return [
-          ...prev,
-          {
-            id: product.id,
-            title: product.title,
-            image: product.images ? product.images[0] : "",
-            seller: typeof product.seller === "string" ? product.seller : product.seller?.name || "",
-            price: product.price,
-            originalPrice: product.originalPrice,
-            rating: product.rating,
-            reviewCount: product.reviewCount,
-            condition: product.condition,
-            category: product.category,
-            quantity: 1,
-          },
-        ];
-      }
-    });
-    setCartOpen(true);
-  };
+		const { addToWishlist } = useWishlist();
+		const handleAddToWishlist = () => {
+			addToWishlist(product);
+		};
 
-  const handleAddToWishlist = () => {
-    if (onAddToWishlist) onAddToWishlist(product);
-  };
+	const handleBuyNow = () => {
+		clearCart();
+		addToCart(product);
+		navigate("/checkout");
+	};
 
-  const handleBuyNow = () => {
-    setCartItems([
-      {
-        id: product.id,
-        title: product.title,
-        image: product.images ? product.images[0] : "",
-        seller: typeof product.seller === "string" ? product.seller : product.seller?.name || "",
-        price: product.price,
-        originalPrice: product.originalPrice,
-        rating: product.rating,
-        reviewCount: product.reviewCount,
-        condition: product.condition,
-        category: product.category,
-        quantity: 1,
-      },
-    ]);
-    navigate("/checkout");
-  };
+	return (
+		<div className="product-page-container">
+			<div className="container">
+				{/* Back Button */}
+				<button className="back-button" onClick={() => window.history.back()}>
+					<ArrowLeft className="back-icon" />
+					Back to Products
+				</button>
+				{/* Heart Icon for Wishlist */}
+				<button className="wishlist-btn" onClick={handleAddToWishlist} style={{ position: "absolute", top: 20, right: 20 }}>
+					<Heart className="wishlist-icon" />
+				</button>
 
-  return (
-    <div className="product-page-container">
-      <div className="container">
-        {/* Back Button */}
-        <button className="back-button" onClick={() => window.history.back()}>
-          <ArrowLeft className="back-icon" />
-          Back to Products
-        </button>
-        {/* Heart Icon for Wishlist */}
-        <button className="wishlist-btn" onClick={handleAddToWishlist} style={{ position: "absolute", top: 20, right: 20 }}>
-          <Heart className="wishlist-icon" />
-        </button>
-
-        <div className="product-layout-grid">
+				<div className="product-layout-grid">
           {/* Product Images */}
           <div className="image-gallery-section">
             <div className="main-image-wrapper">

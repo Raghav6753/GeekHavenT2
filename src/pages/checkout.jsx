@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, CreditCard, Truck, Shield, Check } from "lucide-react";
+import { useCart } from "../context/CartContext";
 import "./checkout.css";
 
-export default function CheckoutPage({ cartItems = [], setCartItems }) {
+export default function CheckoutPage() {
+  const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const { cartItems, clearCart } = useCart();
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = subtotal * 0.08;
   const platformFee = subtotal * 0.03;
@@ -25,7 +29,7 @@ export default function CheckoutPage({ cartItems = [], setCartItems }) {
           <div className="empty-cart-content">
             <h1 className="empty-cart-title">Your cart is empty</h1>
             <p className="empty-cart-text">Add some items to your cart before checking out.</p>
-            <button className="browse-products-btn" onClick={() => window.location.href = "/search"}>
+            <button className="browse-products-btn" onClick={() => navigate("/search")}> 
               Browse Products
             </button>
           </div>
@@ -47,7 +51,7 @@ export default function CheckoutPage({ cartItems = [], setCartItems }) {
               Thank you for your purchase. You'll receive a confirmation email shortly with tracking information.
             </p>
             <div className="order-complete-buttons">
-              <button className="continue-shopping-btn" onClick={() => window.location.href = "/search"}>
+              <button className="continue-shopping-btn" onClick={() => navigate("/search")}> 
                 Continue Shopping
               </button>
               <button className="view-order-btn">

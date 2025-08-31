@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { useProducts } from "../context/ProductsContext";
 import { TrendingUp, Zap, Shield, Users } from "lucide-react";
+import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/productcard";
 import Navbar from "../components/Navbar";
 import CartSidebar from "../components/cartside";
 import "./Homeage.css";
-
-// Removed mockProducts, now using ProductsContext
 
 const CategoryFilter = ({ onCategoryChange }) => {
 	const categories = ["All", "Electronics", "Fashion", "Home & Garden", "Sports", "Books", "Toys", "Automotive", "Health & Beauty"];
@@ -32,54 +31,6 @@ const CategoryFilter = ({ onCategoryChange }) => {
 				</button>
 			))}
 		</div>
-	);
-};
-
-const Header = () => {
-	const navigate = useNavigate();
-	return (
-		<header className="header-container">
-			<div className="header-content">
-				<button onClick={() => navigate('/')} className="logo-btn">
-					ResellerHub
-				</button>
-				<nav className="nav-menu">
-					<button onClick={() => navigate('/products')} className="nav-link-btn">
-						Products
-					</button>
-					<button onClick={() => navigate('/sell')} className="nav-link-btn">
-						Sell
-					</button>
-					<button onClick={() => navigate('/about')} className="nav-link-btn">
-						About
-					</button>
-					<button onClick={() => navigate('/contact')} className="nav-link-btn">
-						Contact
-					</button>
-				</nav>
-				<div className="header-actions">
-					<button className="icon-btn" aria-label="Notifications">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="header-icon">
-							<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-							<path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-						</svg>
-					</button>
-					<button className="icon-btn" aria-label="Shopping cart">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="header-icon">
-							<circle cx="9" cy="21" r="1" />
-							<circle cx="20" cy="21" r="1" />
-							<path d="M1 1h4l2.68 12.55a2 2 0 0 0 1.92 1.45h9.4a2 2 0 0 0 1.92-1.45L23 6H6" />
-						</svg>
-					</button>
-					<button className="profile-btn">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="profile-icon">
-							<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-							<circle cx="12" cy="7" r="4" />
-						</svg>
-					</button>
-				</div>
-			</div>
-		</header>
 	);
 };
 
@@ -126,26 +77,18 @@ const Footer = () => (
 	</footer>
 );
 
-export default function HomePage({ products = [], cartItems, setCartItems, cartOpen, setCartOpen, wishlistItems, setWishlistItems, onAddToWishlist }) {
+export default function HomePage({ products = [], setCartOpen, onAddToWishlist }) {
 		 const { filteredProducts, category, setCategory, loading, error } = useProducts();
 		 const navigate = useNavigate();
+		 const { addToCart } = useCart();
 
 		 const handleCategoryChange = (cat) => {
 			 setCategory(cat === "All" ? "all" : cat);
 		 };
 
 		 const handleAddToCart = (product) => {
-			 setCartItems((prev) => {
-				 const existing = prev.find((item) => item.id === product.id);
-				 if (existing) {
-					 return prev.map((item) =>
-						 item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-					 );
-				 } else {
-					 return [...prev, { ...product, quantity: 1 }];
-				 }
-			 });
-			 setCartOpen(true);
+			 addToCart(product);
+			 if (setCartOpen) setCartOpen(true);
 		 };
 
 		 return (
@@ -217,8 +160,8 @@ export default function HomePage({ products = [], cartItems, setCartItems, cartO
 												 <p className="no-products-text">{error}</p>
 											 ) : filteredProducts.length > 0 ? (
 												 filteredProducts.map((product) => (
-													 <ProductCard key={product.id || product._id} {...product} onAddToCart={() => handleAddToCart(product)} onAddToWishlist={() => onAddToWishlist(product)} />
-												 ))
+													 <ProductCard key={product._id || product.id} product={product} setCartOpen={setCartOpen} onAddToWishlist={onAddToWishlist} />
+												  ))
 											 ) : (
 												 <div className="no-products">
 													 <p className="no-products-text">No products found in this category.</p>

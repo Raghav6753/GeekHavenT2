@@ -3,26 +3,11 @@ import { Heart, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/productcard";
 import "./wishlist.css";
+import { useWishlist } from "../context/WishlistContext";
 
-export default function WishlistPage({ wishlistItems = [], setWishlistItems }) {
+export default function WishlistPage() {
   const navigate = useNavigate();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  const clearWishlist = () => {
-    setWishlistItems([]);
-  };
-
-  const removeItem = (id) => {
-    setWishlistItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  if (!isClient) {
-    return null;
-  }
+  const { wishlistItems, clearWishlist, removeFromWishlist } = useWishlist();
 
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
@@ -75,19 +60,8 @@ export default function WishlistPage({ wishlistItems = [], setWishlistItems }) {
       {/* Product Grid */}
       <div className="wishlist-grid">
         {wishlistItems.map((item) => (
-          <div key={item.id} onClick={() => handleProductClick(item.id)} style={{ cursor: "pointer" }}>
-            <ProductCard
-              id={item.id}
-              title={item.title}
-              price={item.price}
-              originalPrice={item.originalPrice}
-              image={item.image}
-              seller={item.seller}
-              rating={4.9}
-              reviewCount={89}
-              condition={item.condition}
-              isLiked={true}
-            />
+          <div key={item.id || item._id} onClick={() => handleProductClick(item.id || item._id)} style={{ cursor: "pointer" }}>
+            <ProductCard product={item} />
           </div>
         ))}
       </div>

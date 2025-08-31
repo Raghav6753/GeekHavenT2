@@ -1,20 +1,43 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
-const ProductCard = ({ id, title, price, originalPrice, image, condition, rating, reviewCount, seller, category, onAddToCart, onAddToWishlist }) => {
+
+
+const ProductCard = ({ product = null, onAddToWishlist, setCartOpen }) => {
+	if (!product) return null;
+	// Destructure with fallback for id
+	const {
+		_id,
+		id,
+		title,
+		price,
+		originalPrice,
+		images,
+		condition,
+		rating,
+		reviewCount,
+		seller,
+		category,
+		// add other fields as needed
+	} = product;
+	const productKey = _id || id;
+	const image = images && images.length > 0 ? images[0] : "";
 	const navigate = useNavigate();
-	const [isWishlisted, setIsWishlisted] = useState(false); 
+	const [isWishlisted, setIsWishlisted] = useState(false);
+	const { addToCart } = useCart();
 	const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
 
 	const handleTitleClick = (e) => {
 		e.stopPropagation();
-		navigate(`/product/${id}`);
+		navigate(`/product/${productKey}`);
 	};
 
 	const handleWishlistClick = (e) => {
 		e.stopPropagation();
 		if (!isWishlisted && onAddToWishlist) {
-			onAddToWishlist({ id, title, price, originalPrice, image, condition, rating, reviewCount, seller, category });
+			onAddToWishlist(product);
 		}
 		setIsWishlisted((prev) => !prev);
 	};
@@ -53,7 +76,17 @@ const ProductCard = ({ id, title, price, originalPrice, image, condition, rating
 				<div className="product-card-pricing">
 					<p className="product-card-price">${price}</p>
 					<span className="product-card-original-price">${originalPrice}</span>
-					<button className="product-card-add-btn" onClick={(e) => { e.stopPropagation(); onAddToCart && onAddToCart(); }}>
+					<button
+						className="product-card-add-btn"
+						key={`${productKey}`}
+						aria-label={`Add ${title} to cart`}
+						onClick={(e) => {
+							e.stopPropagation();
+							console.log('ProductCard: Add clicked', productKey, product);
+							if (addToCart && product) addToCart(product);
+							if (setCartOpen) setCartOpen(true);
+						}}
+					>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="product-card-add-icon">
 							<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
 							<path d="M3 6h18" />

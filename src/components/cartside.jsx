@@ -1,9 +1,13 @@
 import React from "react";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import "./cartside.css";
-const CartSidebar = ({ isOpen, onClose, cartItems, setCartItems }) => {
+
+const CartSidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const { cartItems, removeFromCart, updateQuantity } = useCart();
+  console.log('CartSidebar render - cartItems length:', cartItems.length, 'items:', cartItems);
 
   const calculateTotals = () => {
     const subtotal = cartItems.reduce(
@@ -18,16 +22,9 @@ const CartSidebar = ({ isOpen, onClose, cartItems, setCartItems }) => {
 
   const totals = calculateTotals();
 
-  const updateQuantity = (id, quantity) => {
-    setCartItems((prevItems) =>
-      prevItems
-        .map((item) => (item.id === id ? { ...item, quantity: Math.max(0, quantity) } : item))
-        .filter((item) => item.quantity > 0)
-    );
-  };
-
-  const removeItem = (id) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+ 
+  const onChangeQuantity = (id, quantity) => {
+    updateQuantity(id, quantity);
   };
 
   return (
@@ -68,8 +65,8 @@ const CartSidebar = ({ isOpen, onClose, cartItems, setCartItems }) => {
           <>
             <div className="cart-items-list">
               <div className="cart-items-scroll">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="cart-item">
+                {cartItems.map((item, idx) => (
+                  <div key={(item.id || item._id || idx) + '-' + idx} className="cart-item">
                     <img
                       src={item.image || "/placeholder.svg"}
                       alt={item.title}
@@ -83,7 +80,7 @@ const CartSidebar = ({ isOpen, onClose, cartItems, setCartItems }) => {
                         <div className="quantity-controls">
                           <button
                             className="quantity-btn"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            onClick={() => onChangeQuantity(item.id || item._id, item.quantity - 1)}
                             disabled={item.quantity <= 1}
                           >
                             <Minus className="quantity-icon" />
@@ -91,12 +88,12 @@ const CartSidebar = ({ isOpen, onClose, cartItems, setCartItems }) => {
                           <span className="quantity-display">{item.quantity}</span>
                           <button
                             className="quantity-btn"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => onChangeQuantity(item.id || item._id, item.quantity + 1)}
                           >
                             <Plus className="quantity-icon" />
                           </button>
                         </div>
-                        <button className="remove-item-btn" onClick={() => removeItem(item.id)}>
+                        <button className="remove-item-btn" onClick={() => removeFromCart(item.id || item._id)}>
                           <Trash2 className="remove-icon" />
                         </button>
                       </div>

@@ -15,6 +15,7 @@ export function ProductsProvider({ children }) {
       try {
         const res = await axios.get("http://localhost:5000/api/products");
         setProducts(res.data);
+        console.log(res.data);
         setError(null);
       } catch (err) {
         setError("Failed to fetch products");
@@ -25,13 +26,22 @@ export function ProductsProvider({ children }) {
     fetchProducts();
   }, []);
 
-  // Filter products by category
-  const filteredProducts = category === "all"
-    ? products
-    : products.filter(p => p.category === category);
+  const filteredProducts =
+    category === "all"
+      ? products
+      : products.filter((p) => p.category === category);
 
   return (
-    <ProductsContext.Provider value={{ products, filteredProducts, loading, error, category, setCategory }}>
+    <ProductsContext.Provider
+      value={{
+        products,
+        filteredProducts,
+        loading,
+        error,
+        category,
+        setCategory,
+      }}
+    >
       {children}
     </ProductsContext.Provider>
   );
