@@ -467,3 +467,25 @@ body {
     font-weight: 500;
     color: #333;
 }
+
+/* New styles for horizontal scroll container */
+.product-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding: 1rem 0;
+    scroll-behavior: smooth;
+}
+
+.product-scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.product-scroll-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+.product-scroll-container::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}

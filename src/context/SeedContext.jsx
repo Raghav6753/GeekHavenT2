@@ -48,15 +48,58 @@ export function SeedProvider({ seed = "035", children }) {
 
   const addLog = (action) => {
     const entry = { ts: new Date().toISOString(), action };
-    setLogs((prev) => [entry, ...prev].slice(0, 100));
+    setLogs((prev) => {
+      const prevLogs = Array.isArray(prev) ? prev : [];
+      return [entry, ...prevLogs].slice(0, 100);
+    });
   };
+
+  // Fetch logs from backend
+  const fetchLogs = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/logs/recent');
+      if (response.ok) {
+        const backendLogs = await response.json();
+        setLogs(backendLogs);
+        try {
+          localStorage.setItem('app_logs', JSON.stringify(backendLogs));
+        } catch (e) {
+          // ignore localStorage errors
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch logs:', error);
+    }
+  };
+
+  // Load logs from localStorage on init
+  useEffect(() => {
+    try {
+      const storedLogs = localStorage.getItem('app_logs');
+      if (storedLogs) {
+        const parsedLogs = JSON.parse(storedLogs);
+        if (Array.isArray(parsedLogs)) {
+          setLogs(parsedLogs);
+        }
+      }
+    } catch (e) {
+      // ignore parse errors
+    }
+  }, []);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--seed-accent', themeColor);
   }, [themeColor]);
 
+  useEffect(() => {
+    fetchLogs();
+    // Refresh logs every 30 seconds
+    const interval = setInterval(fetchLogs, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <SeedContext.Provider value={{ seed: currentSeed, setSeed, seedNumber, platformFeeRate, themeColor, checksumForId, logs, addLog }}>
+    <SeedContext.Provider value={{ seed: currentSeed, setSeed, seedNumber, platformFeeRate, themeColor, checksumForId, logs, addLog, fetchLogs }}>
       {children}
     </SeedContext.Provider>
   );
