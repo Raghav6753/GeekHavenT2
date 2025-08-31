@@ -1,30 +1,97 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box } from 'lucide-react';
 import './autpage.css';
+import { UserContext } from '../context/UserContext';
+import axios from 'axios';
+
+const API_URL = "http://localhost:5000/api/auth";
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const [view, setView] = useState('signIn'); // 'signIn', 'signUp', 'otpLogin'
+  const { login } = useContext(UserContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
+  const [showPasswordInput, setShowPasswordInput] = useState(false);
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [view, setView] = useState("signIn");
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    console.log('Signing In...');
-    // In a real app, this would handle authentication
-    // navigate('/dashboard');
+    setError("");
+    try {
+      const { data } = await axios.post(`${API_URL}/find-email`, { email });
+      if (!data.exists) {
+        setError("Email not found. Please sign up.");
+        return;
+      }
+      setShowPasswordInput(true);
+      if (password) {
+        const { data: data2 } = await axios.post(`${API_URL}/signin`, { email, password });
+        if (data2.success && data2.token) {
+          login(data2.user, data2.token);
+          navigate("/");
+        } else {
+          setError(data2.error || "Invalid password");
+        }
+      }
+    } catch (err) {
+      setError("Server error");
+    }
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    console.log('Signing Up...');
-    // In a real app, this would handle user creation
-    // navigate('/dashboard');
+    setError("");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    try {
+      const { data } = await axios.post(`${API_URL}/find-email`, { email });
+      if (data.exists) {
+        setError("Email already exists. Please sign in.");
+        return;
+      }
+      const { data: data2 } = await axios.post(`${API_URL}/signup`, { email, password });
+      if (data2.success && data2.token) {
+        login(data2.user, data2.token);
+        navigate("/");
+      } else {
+        setError(data2.error || "Signup failed");
+      }
+    } catch (err) {
+      setError("Server error");
+    }
   };
 
-  const handleOtpLogin = (e) => {
+  const handleOtpLogin = async (e) => {
     e.preventDefault();
-    console.log('Requesting OTP...');
-    // In a real app, this would send an OTP
+    setError("");
+    try {
+      const { data } = await axios.post(`${API_URL}/find-email`, { email });
+      if (!data.exists) {
+        setError("Email not found. Please sign up.");
+        return;
+      }
+      setShowOtpInput(true);
+      if (otp.length === 4) {
+        const { data: data2 } = await axios.post(`${API_URL}/verify-otp`, { email, otp });
+        if (data2.success && data2.token) {
+          login(data2.user, data2.token);
+          navigate("/");
+        } else {
+          setError(data2.error || "Invalid OTP");
+        }
+      } else {
+        await axios.post(`${API_URL}/send-otp`, { email });
+      }
+    } catch (err) {
+      setError("Server error");
+    }
   };
 
   const renderForm = () => {
@@ -35,15 +102,15 @@ const AuthPage = () => {
             <h2 className="form-title">Sign Up</h2>
             <div className="form-group">
               <label htmlFor="email">Email</label>
-              <input type="email" id="email" className="form-input" placeholder="Enter your email" required />
+              <input type="email" id="email" className="form-input" placeholder="Enter your email" required value={email} onChange={e => setEmail(e.target.value)} />
             </div>
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input type="password" id="password" className="form-input" placeholder="Enter your password" required />
+              <input type="password" id="password" className="form-input" placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)} />
             </div>
             <div className="form-group">
               <label htmlFor="confirmPassword">Confirm Password</label>
-              <input type="password" id="confirmPassword" className="form-input" placeholder="Confirm your password" required />
+              <input type="password" id="confirmPassword" className="form-input" placeholder="Confirm your password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
             </div>
             <div className="form-group">
               <label htmlFor="stream">Stream</label>
@@ -56,6 +123,7 @@ const AuthPage = () => {
             </div>
             <button type="submit" className="primary-btn">Sign Up</button>
             <button type="button" className="switch-link" onClick={() => setView('signIn')}>Sign In</button>
+            {error && <div className="auth-error">{error}</div>}
           </form>
         );
       case 'otpLogin':
@@ -64,14 +132,21 @@ const AuthPage = () => {
             <h2 className="form-title">Login with OTP</h2>
             <div className="form-group">
               <label htmlFor="email">Email</label>
-              <input type="email" id="email" className="form-input" placeholder="Enter your email" required />
+              <input type="email" id="email" className="form-input" placeholder="Enter your email" required value={email} onChange={e => setEmail(e.target.value)} />
             </div>
+            {showOtpInput && (
+              <div className="form-group">
+                <label htmlFor="otp">OTP</label>
+                <input type="text" id="otp" className="form-input" maxLength={4} placeholder="Enter OTP" required value={otp} onChange={e => setOtp(e.target.value)} />
+              </div>
+            )}
             <button type="submit" className="primary-btn">Verify</button>
             <div className="link-group">
               <button type="button" className="switch-link" onClick={() => setView('signIn')}>Sign In</button>
               <span className="link-separator">|</span>
               <button type="button" className="switch-link" onClick={() => setView('signUp')}>Sign Up</button>
             </div>
+            {error && <div className="auth-error">{error}</div>}
           </form>
         );
       case 'signIn':
@@ -81,18 +156,21 @@ const AuthPage = () => {
             <h2 className="form-title">Sign In</h2>
             <div className="form-group">
               <label htmlFor="email">Email</label>
-              <input type="email" id="email" className="form-input" placeholder="Enter your email" required />
+              <input type="email" id="email" className="form-input" placeholder="Enter your email" required value={email} onChange={e => setEmail(e.target.value)} />
             </div>
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input type="password" id="password" className="form-input" placeholder="Enter your password" required />
-            </div>
+            {showPasswordInput && (
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input type="password" id="password" className="form-input" placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)} />
+              </div>
+            )}
             <button type="submit" className="primary-btn">Sign In</button>
             <div className="link-group">
               <button type="button" className="switch-link" onClick={() => setView('otpLogin')}>Login with OTP</button>
               <span className="link-separator">|</span>
               <button type="button" className="switch-link" onClick={() => setView('signUp')}>Sign Up</button>
             </div>
+            {error && <div className="auth-error">{error}</div>}
           </form>
         );
     }

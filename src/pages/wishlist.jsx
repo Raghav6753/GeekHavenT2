@@ -55,7 +55,6 @@ export default function WishlistPage({ wishlistItems = [], setWishlistItems }) {
 
   return (
     <div className="wishlist-page-container">
-      {/* Populated Wishlist Header */}
       <div className="wishlist-header">
         <div>
           <h1 className="wishlist-full-title">My Wishlist</h1>
@@ -72,7 +71,6 @@ export default function WishlistPage({ wishlistItems = [], setWishlistItems }) {
         </div>
       </div>
 
-      {/* Product Grid */}
       <div className="wishlist-grid">
         {wishlistItems.map((item) => (
           <div key={item.id} onClick={() => handleProductClick(item.id)} style={{ cursor: "pointer" }}>

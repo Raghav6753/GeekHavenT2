@@ -10,7 +10,6 @@ import SellPage from "./pages/sellpage";
 import CheckoutPage from "./pages/checkout";
 import AuthPage from "./pages/authpage";
 
-// Central product list
 const products = [
   {
     id: "1",
@@ -99,7 +98,6 @@ const App = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const { isAuthenticated } = useContext(UserContext);
 
-  // Add to wishlist handler
   const handleAddToWishlist = (product) => {
     setWishlistItems((prev) => {
       if (prev.find((item) => item.id === product.id)) return prev;

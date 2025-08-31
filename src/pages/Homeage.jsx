@@ -7,9 +7,6 @@ import ProductCard from "../components/productcard";
 import Navbar from "../components/Navbar";
 import CartSidebar from "../components/cartside";
 import "./Homeage.css";
-
-// Mock product data
-const mockProducts = [
 	{
 		id: "1",
 		title: "iPhone 14 Pro Max - Space Black 256GB",
@@ -24,7 +21,6 @@ const mockProducts = [
 	},
 	{
 		id: "2",
-		title: "Nike Air Jordan 1 Retro High OG - Size 10",
 		price: 180,
 		originalPrice: 220,
 		image: "/nike-air-jordan-1-sneakers.png",
@@ -213,7 +209,6 @@ export default function HomePage({ products = [], cartItems, setCartItems, cartO
 		}
 	};
 
-	// Add to cart handler
 	const handleAddToCart = (product) => {
 		setCartItems((prev) => {
 			const existing = prev.find((item) => item.id === product.id);
@@ -228,7 +223,6 @@ export default function HomePage({ products = [], cartItems, setCartItems, cartO
 		setCartOpen(true);
 	};
 
-	// Render product cards
 	return (
 		<div className="app-container">
 			

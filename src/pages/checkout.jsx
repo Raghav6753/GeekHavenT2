@@ -5,19 +5,16 @@ import "./checkout.css";
 export default function CheckoutPage({ cartItems = [], setCartItems }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
-
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = subtotal * 0.08;
   const platformFee = subtotal * 0.03;
   const total = subtotal + tax + platformFee;
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
       setOrderComplete(true);
-      setCartItems([]); // Clear cart after "order"
     }, 3000);
   };
 
@@ -123,7 +120,6 @@ export default function CheckoutPage({ cartItems = [], setCartItems }) {
                   </div>
                 </div>
               </div>
-
               {/* Payment Information */}
               <div className="checkout-card">
                 <div className="checkout-card-header">

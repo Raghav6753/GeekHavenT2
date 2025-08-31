@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./product.css";
 
 export default function ProductDetailPage({ products = [], cartItems, setCartItems, setCartOpen, wishlistItems, setWishlistItems, onAddToWishlist }) {
+	const isLiked = wishlistItems?.some(item => item.id === product?.id);
   const { id: productId } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
@@ -11,7 +12,6 @@ export default function ProductDetailPage({ products = [], cartItems, setCartIte
   const [activeTab, setActiveTab] = useState("description");
 
   useEffect(() => {
-    // Find product by id from products prop
     const productData = products.find((p) => p.id === productId);
     if (productData) {
       setProduct(productData);
@@ -29,9 +29,7 @@ export default function ProductDetailPage({ products = [], cartItems, setCartIte
   }
 
   const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
-  const isLiked = false; // Mocking the wishlist state for this example
 
-  // Add to cart handler
   const handleAddToCart = () => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
@@ -40,7 +38,6 @@ export default function ProductDetailPage({ products = [], cartItems, setCartIte
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       } else {
-        // Map product fields to match cartside.jsx expectations
         return [
           ...prev,
           {
@@ -62,12 +59,10 @@ export default function ProductDetailPage({ products = [], cartItems, setCartIte
     setCartOpen(true);
   };
 
-  // Add to wishlist handler
   const handleAddToWishlist = () => {
     if (onAddToWishlist) onAddToWishlist(product);
   };
 
-  // Buy Now handler
   const handleBuyNow = () => {
     setCartItems([
       {
@@ -241,33 +236,41 @@ export default function ProductDetailPage({ products = [], cartItems, setCartIte
               </div>
             )}
 
-            {activeTab === "specifications" && (
-              <div className="tab-card">
-                <h3 className="tab-title">Specifications</h3>
-                <div className="spec-list">
-                  {Object.entries(product.specifications).map(([key, value]) => (
-                    <div key={key} className="spec-item">
-                      <span className="spec-label">{key}</span>
-                      <span className="spec-value">{value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+						{activeTab === "specifications" && (
+							<div className="tab-card">
+								<h3 className="tab-title">Specifications</h3>
+								<div className="spec-list">
+									{product.specifications ? (
+										Object.entries(product.specifications).map(([key, value]) => (
+											<div key={key} className="spec-item">
+												<span className="spec-label">{key}</span>
+												<span className="spec-value">{value}</span>
+											</div>
+										))
+									) : (
+										<span className="spec-value">No specifications available.</span>
+									)}
+								</div>
+							</div>
+						)}
 
-            {activeTab === "pricing" && (
-              <div className="tab-card">
-                <h3 className="tab-title">Price History</h3>
-                <div className="price-history-list">
-                  {product.priceHistory.map((entry, index) => (
-                    <div key={index} className="price-history-item">
-                      <span className="price-history-date">{entry.date}</span>
-                      <span className="price-history-price">${entry.price}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+						{activeTab === "pricing" && (
+							<div className="tab-card">
+								<h3 className="tab-title">Price History</h3>
+								<div className="price-history-list">
+									{product.priceHistory && product.priceHistory.length > 0 ? (
+										product.priceHistory.map((entry, index) => (
+											<div key={index} className="price-history-item">
+												<span className="price-history-date">{entry.date}</span>
+												<span className="price-history-price">${entry.price}</span>
+											</div>
+										))
+									) : (
+										<span className="price-history-value">No price history available.</span>
+									)}
+								</div>
+							</div>
+						)}
           </div>
         </div>
       </div>

@@ -348,9 +348,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem; /* Fixed width for the add button icon */
-  height: 2.5rem; /* Fixed height for the add button icon */
-  border-radius: 9999px; /* Circular button */
+  width: 2.5rem; 
+  height: 2.5rem;
+  border-radius: 9999px;
   background-color: var(--primary);
   font-size: 0.875rem;
   font-weight: 500;
