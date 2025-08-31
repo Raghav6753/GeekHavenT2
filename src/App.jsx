@@ -10,6 +10,11 @@ import WishlistPage from "./pages/wishlist";
 import SellPage from "./pages/sellpage";
 import CheckoutPage from "./pages/checkout";
 import AuthPage from "./pages/authpage";
+import ContactSeller from "./pages/contactseller";
+import AboutPage from "./pages/about";
+import LogsPage from "./pages/logs";
+import Healthz from "./pages/healthz";
+import SeedExamples from "./pages/seedexamples";
 
 
 
@@ -57,10 +62,15 @@ const App = () => {
                 onAddToWishlist={addToWishlist}
             />}
         />
+    <Route path="/about" element={<AboutPage />} />
+  <Route path="/seed-examples" element={<SeedExamples />} />
+    <Route path="/logs/recent" element={<LogsPage />} />
+    <Route path="/035/healthz" element={<Healthz />} />
         <Route
           path="/sell"
           element={<SellPage />}
         />
+  <Route path="/contact/:id" element={<ContactSeller />} />
         <Route
           path="/checkout"
           element={<CheckoutPage />}

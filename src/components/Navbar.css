@@ -38,7 +38,7 @@ body {
 .navbar-logo-btn {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--seed-accent, var(--primary));
   background: none;
   border: none;
   cursor: pointer;
@@ -91,11 +91,17 @@ body {
   align-items: center;
   color: var(--muted-text);
   font-weight: 500;
-  transition: color 0.2s;
+  transition: color 0.2s, transform 0.12s, box-shadow 0.12s;
 }
 
 .navbar-action-btn:hover {
-  color: var(--primary);
+  color: var(--seed-accent, var(--primary));
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.navbar-action-btn:active {
+  transform: translateY(0);
 }
 
 .navbar-icon {
@@ -131,4 +137,18 @@ body {
   .navbar-right .sell-btn {
     display: none;
   }
+}
+
+/* utility for any simple text links in navbar to match action style */
+.navbar-link {
+  background: transparent;
+  border: none;
+  color: var(--muted-text);
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.18s, background 0.18s;
+}
+.navbar-link:hover {
+  color: var(--seed-accent, var(--primary));
 }

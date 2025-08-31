@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, CreditCard, Truck, Shield, Check } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useSeed } from "../context/SeedContext";
 import "./checkout.css";
 
 export default function CheckoutPage() {
@@ -9,16 +10,19 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const { cartItems, clearCart } = useCart();
+  const { platformFeeRate, addLog } = useSeed();
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = subtotal * 0.08;
-  const platformFee = subtotal * 0.03;
+  const platformFee = subtotal * platformFeeRate;
   const total = subtotal + tax + platformFee;
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsProcessing(true);
+    addLog('checkout_submit');
     setTimeout(() => {
       setIsProcessing(false);
       setOrderComplete(true);
+      addLog('checkout_complete');
     }, 3000);
   };
 

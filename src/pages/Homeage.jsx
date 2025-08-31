@@ -77,7 +77,7 @@ const Footer = () => (
 	</footer>
 );
 
-export default function HomePage({ products = [], setCartOpen, onAddToWishlist }) {
+export default function HomePage({ setCartOpen, onAddToWishlist }) {
 		 const { filteredProducts, category, setCategory, loading, error } = useProducts();
 		 const navigate = useNavigate();
 		 const { addToCart } = useCart();

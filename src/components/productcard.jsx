@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useSeed } from "../context/SeedContext";
 
 
 
@@ -23,6 +24,7 @@ const ProductCard = ({ product = null, onAddToWishlist, setCartOpen }) => {
 		// add other fields as needed
 	} = product;
 	const productKey = _id || id;
+	const { checksumForId, addLog } = useSeed();
 	const image = images && images.length > 0 ? images[0] : "";
 	const navigate = useNavigate();
 	const [isWishlisted, setIsWishlisted] = useState(false);
@@ -31,6 +33,7 @@ const ProductCard = ({ product = null, onAddToWishlist, setCartOpen }) => {
 
 	const handleTitleClick = (e) => {
 		e.stopPropagation();
+		addLog(`view:${productKey}`);
 		navigate(`/product/${productKey}`);
 	};
 
@@ -84,6 +87,7 @@ const ProductCard = ({ product = null, onAddToWishlist, setCartOpen }) => {
 							e.stopPropagation();
 							console.log('ProductCard: Add clicked', productKey, product);
 							if (addToCart && product) addToCart(product);
+							addLog(`add:${productKey}`);
 							if (setCartOpen) setCartOpen(true);
 						}}
 					>

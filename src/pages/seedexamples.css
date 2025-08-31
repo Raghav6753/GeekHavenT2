@@ -1,0 +1,66 @@
+:root {
+  --card-bg: #fff;
+  --muted: #6b7280;
+}
+
+.seed-examples-page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.seed-examples-page h2 {
+  margin-bottom: 0.5rem;
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.seed-swatch {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.8rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: var(--card-bg);
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+}
+
+.swatch-box {
+  height: 56px;
+  width: 56px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.swatch-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.swatch-seed {
+  font-weight: 700;
+}
+
+.swatch-color {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.seed-swatch:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  border-color: rgba(0,0,0,0.06);
+}
+
+.seed-swatch.active {
+  outline: 3px solid rgba(0,0,0,0.04);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+  border-color: var(--seed-accent, #000);
+}

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Upload, X, Plus } from "lucide-react";
 import "./sellpage.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   "Electronics",
@@ -37,6 +39,8 @@ export default function SellPage() {
     model: "",
     location: "",
   });
+
+  const navigate = useNavigate();
 
   const handleImageUpload = (e) => {
     const files = e.target.files;
@@ -79,8 +83,42 @@ export default function SellPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", { ...formData, images, tags });
-    alert("Product listed successfully!");
+    const { title, description, category, condition, price, originalPrice, brand, model, location } = formData;
+    const newProduct = {
+      id: Date.now().toString(),
+      title,
+      description,
+      category,
+      condition,
+      price: Number(price) || 0,
+      originalPrice: Number(originalPrice) || 0,
+      brand,
+      model,
+      location,
+      images,
+      tags,
+      seller: { name: "You", avatar: "", rating: 0, reviewCount: 0, joinedDate: new Date().getFullYear(), responseTime: "< 24 hours" },
+      rating: 0,
+      reviewCount: 0,
+    };
+
+    (async () => {
+      try {
+        const res = await axios.post("http://localhost:5000/api/products", newProduct);
+        if (res.status === 201 || res.status === 200) {
+          setImages([]);
+          setTags([]);
+          setCurrentTag("");
+          setFormData({ title: "", description: "", category: "", condition: "", price: "", originalPrice: "", brand: "", model: "", location: "" });
+          navigate('/');
+        } else {
+          alert('Failed to list product.');
+        }
+      } catch (err) {
+        console.error('Error posting product:', err);
+        alert('Error listing product. Check console for details.');
+      }
+    })();
   };
 
   return (

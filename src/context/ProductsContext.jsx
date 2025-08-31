@@ -26,6 +26,10 @@ export function ProductsProvider({ children }) {
     fetchProducts();
   }, []);
 
+  const addProduct = (product) => {
+    setProducts((prev) => [product, ...prev]);
+  };
+
   const filteredProducts =
     category === "all"
       ? products
@@ -39,7 +43,8 @@ export function ProductsProvider({ children }) {
         loading,
         error,
         category,
-        setCategory,
+  setCategory,
+  addProduct,
       }}
     >
       {children}

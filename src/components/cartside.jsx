@@ -2,11 +2,13 @@ import React from "react";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useSeed } from "../context/SeedContext";
 import "./cartside.css";
 
 const CartSidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { cartItems, removeFromCart, updateQuantity } = useCart();
+  const { platformFeeRate, addLog, checksumForId } = useSeed();
   console.log('CartSidebar render - cartItems length:', cartItems.length, 'items:', cartItems);
 
   const calculateTotals = () => {
@@ -14,8 +16,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-    const platformFeeRate = 0.05;
-    const platformFee = subtotal * platformFeeRate;
+  const platformFee = subtotal * platformFeeRate;
     const total = subtotal + platformFee;
     return { subtotal, platformFee, total };
   };
@@ -66,14 +67,14 @@ const CartSidebar = ({ isOpen, onClose }) => {
             <div className="cart-items-list">
               <div className="cart-items-scroll">
                 {cartItems.map((item, idx) => (
-                  <div key={(item.id || item._id || idx) + '-' + idx} className="cart-item">
+                    <div key={(item.id || item._id || idx) + '-' + idx} className="cart-item">
                     <img
                       src={item.image || "/placeholder.svg"}
                       alt={item.title}
                       className="cart-item-image"
                     />
                     <div className="cart-item-details">
-                      <h4 className="cart-item-title">{item.title}</h4>
+                      <h4 className="cart-item-title">{item.title} <span className="cart-item-id">#{(item.id || item._id) + checksumForId(item.id || item._id)}</span></h4>
                       <p className="cart-item-seller">by {typeof item.seller === 'object' && item.seller !== null ? item.seller.name : item.seller}</p>
                       <div className="cart-item-actions">
                         <span className="cart-item-price">${item.price.toFixed(2)}</span>
@@ -93,7 +94,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                             <Plus className="quantity-icon" />
                           </button>
                         </div>
-                        <button className="remove-item-btn" onClick={() => removeFromCart(item.id || item._id)}>
+                          <button className="remove-item-btn" onClick={() => { removeFromCart(item.id || item._id); addLog(`remove:${item.id || item._id}`); }}>
                           <Trash2 className="remove-icon" />
                         </button>
                       </div>
@@ -108,7 +109,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                 <span>${totals.subtotal.toFixed(2)}</span>
               </div>
               <div className="summary-row">
-                <span>Platform Fee (5%)</span>
+                <span>Platform Fee ({Math.round(platformFeeRate * 100)}%)</span>
                 <span>${totals.platformFee.toFixed(2)}</span>
               </div>
               <div className="summary-row">
@@ -122,7 +123,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
               </div>
               <div className="checkout-buttons">
                 <button className="view-cart-btn">View Cart</button>
-                <button className="checkout-btn" onClick={() => { onClose(); navigate("/checkout"); }}>Checkout</button>
+                <button className="checkout-btn" onClick={() => { addLog('checkout_clicked'); onClose(); navigate("/checkout"); }}>Checkout</button>
               </div>
             </div>
           </>

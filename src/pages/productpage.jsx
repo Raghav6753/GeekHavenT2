@@ -6,6 +6,7 @@ import { ArrowLeft, Heart, Star, MessageCircle, Truck, Shield, RotateCcw, Shoppi
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import "./product.css"
+import { useSeed } from "../context/SeedContext";
 export default function ProductDetailPage({ setCartOpen, onAddToWishlist }) {
 	const { products, loading, error } = useProducts();
 	const { id: productId } = useParams();
@@ -45,6 +46,8 @@ export default function ProductDetailPage({ setCartOpen, onAddToWishlist }) {
 		const handleAddToWishlist = () => {
 			addToWishlist(product);
 		};
+
+	const { checksumForId, addLog } = useSeed();
 
 	const handleBuyNow = () => {
 		clearCart();
@@ -99,7 +102,7 @@ export default function ProductDetailPage({ setCartOpen, onAddToWishlist }) {
               <span className="badge outline-badge">{product.category}</span>
               {discount > 0 && <span className="badge primary-badge">-{discount}%</span>}
             </div>
-            <h1 className="product-title">{product.title}</h1>
+ 			<h1 className="product-title">{product.title} <span className="product-id">#{(product.id || product._id) + checksumForId(product.id || product._id)}</span></h1>
 
             <div className="product-rating">
               <Star className="rating-star-icon" />
@@ -127,10 +130,10 @@ export default function ProductDetailPage({ setCartOpen, onAddToWishlist }) {
                     <span>Joined {typeof product.seller === 'object' && product.seller?.joinedDate ? product.seller.joinedDate : ''}</span>
                   </div>
                 </div>
-                <button className="contact-seller-btn">
-                  <MessageCircle className="contact-icon" />
-                  Contact
-                </button>
+								<button className="contact-seller-btn" onClick={() => { addLog(`contact:${product.id || product._id}`); navigate(`/contact/${product.id || product._id}`); }}>
+									<MessageCircle className="contact-icon" />
+									Contact
+								</button>
               </div>
             </div>
 
