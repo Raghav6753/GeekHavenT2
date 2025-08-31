@@ -49,7 +49,7 @@ const ProductCard = ({ id, title, price, originalPrice, image, condition, rating
 					</span>
 					<span className="product-card-review-count">({reviewCount})</span>
 				</div>
-				<p className="product-card-seller">by {seller}</p>
+				<p className="product-card-seller">by {typeof seller === 'object' && seller !== null ? seller.name : seller}</p>
 				<div className="product-card-pricing">
 					<p className="product-card-price">${price}</p>
 					<span className="product-card-original-price">${originalPrice}</span>

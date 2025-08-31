@@ -1,32 +1,34 @@
 import React, { useState, useEffect } from "react";
+import { useProducts } from "../context/ProductsContext";
 import { ArrowLeft, Heart, ShoppingCart, Star, MessageCircle, Shield, Truck, RotateCcw } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./product.css";
 
-export default function ProductDetailPage({ products = [], cartItems, setCartItems, setCartOpen, wishlistItems, setWishlistItems, onAddToWishlist }) {
-	const isLiked = wishlistItems?.some(item => item.id === product?.id);
-  const { id: productId } = useParams();
-  const navigate = useNavigate();
-  const [product, setProduct] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [activeTab, setActiveTab] = useState("description");
+	 const { products, loading, error } = useProducts();
+	 const { id: productId } = useParams();
+	 const navigate = useNavigate();
+	 const [product, setProduct] = useState(null);
+	 const [selectedImage, setSelectedImage] = useState(0);
+	 const [activeTab, setActiveTab] = useState("description");
+	 const isLiked = wishlistItems?.some(item => item.id === product?.id || item._id === product?._id);
 
-  useEffect(() => {
-    const productData = products.find((p) => p.id === productId);
-    if (productData) {
-      setProduct(productData);
-    }
-  }, [productId, products]);
+	 useEffect(() => {
+		 const productData = products.find((p) => p.id === productId || p._id === productId);
+		 if (productData) {
+			 setProduct(productData);
+		 }
+	 }, [productId, products]);
 
-  if (!product) {
-    return (
-      <div className="product-page-container">
-        <div className="product-not-found">
-          <h1 className="not-found-title">Product not found</h1>
-        </div>
-      </div>
-    );
-  }
+	 // Fix: Ensure return is inside the function body
+	 if (!product) {
+		 return (
+			 <div className="product-page-container">
+				 <div className="product-not-found">
+					 <h1 className="not-found-title">Product not found</h1>
+				 </div>
+			 </div>
+		 );
+	 }
 
   const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
 
@@ -147,14 +149,14 @@ export default function ProductDetailPage({ products = [], cartItems, setCartIte
             {/* Seller Info */}
             <div className="seller-card">
               <div className="seller-info">
-                <img src={product.seller.avatar} alt={product.seller.name} className="seller-avatar" />
+                <img src={typeof product.seller === 'object' && product.seller?.avatar ? product.seller.avatar : '/placeholder.svg'} alt={typeof product.seller === 'object' && product.seller?.name ? product.seller.name : product.seller} className="seller-avatar" />
                 <div className="seller-details">
-                  <h3 className="seller-name">{product.seller.name}</h3>
+                  <h3 className="seller-name">{typeof product.seller === 'object' && product.seller?.name ? product.seller.name : product.seller}</h3>
                   <div className="seller-stats">
                     <Star className="seller-star-icon" />
-                    <span>{product.seller.rating} ({product.seller.reviewCount} reviews)</span>
+                    <span>{typeof product.seller === 'object' && product.seller?.rating ? product.seller.rating : product.rating} ({typeof product.seller === 'object' && product.seller?.reviewCount ? product.seller.reviewCount : product.reviewCount} reviews)</span>
                     <span>•</span>
-                    <span>Joined {product.seller.joinedDate}</span>
+                    <span>Joined {typeof product.seller === 'object' && product.seller?.joinedDate ? product.seller.joinedDate : ''}</span>
                   </div>
                 </div>
                 <button className="contact-seller-btn">

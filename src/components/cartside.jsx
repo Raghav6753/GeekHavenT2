@@ -77,7 +77,7 @@ const CartSidebar = ({ isOpen, onClose, cartItems, setCartItems }) => {
                     />
                     <div className="cart-item-details">
                       <h4 className="cart-item-title">{item.title}</h4>
-                      <p className="cart-item-seller">by {item.seller}</p>
+                      <p className="cart-item-seller">by {typeof item.seller === 'object' && item.seller !== null ? item.seller.name : item.seller}</p>
                       <div className="cart-item-actions">
                         <span className="cart-item-price">${item.price.toFixed(2)}</span>
                         <div className="quantity-controls">

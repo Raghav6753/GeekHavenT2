@@ -1,84 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useProducts } from "../context/ProductsContext";
 import { TrendingUp, Zap, Shield, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/productcard";
 import Navbar from "../components/Navbar";
 import CartSidebar from "../components/cartside";
 import "./Homeage.css";
-	{
-		id: "1",
-		title: "iPhone 14 Pro Max - Space Black 256GB",
-		price: 899,
-		originalPrice: 1099,
-		image: "/iphone-14-pro-max-space-black.png",
-		seller: "TechDeals Pro",
-		rating: 4.8,
-		reviewCount: 124,
-		condition: "Like New",
-		category: "Electronics",
-	},
-	{
-		id: "2",
-		price: 180,
-		originalPrice: 220,
-		image: "/nike-air-jordan-1-sneakers.png",
-		seller: "SneakerHub",
-		rating: 4.9,
-		reviewCount: 89,
-		condition: "New",
-		category: "Fashion",
-	},
-	{
-		id: "3",
-		title: "MacBook Air M2 13-inch - Silver",
-		price: 1050,
-		originalPrice: 1199,
-		image: "/macbook-air-m2-silver-laptop.png",
-		seller: "AppleReseller",
-		rating: 4.7,
-		reviewCount: 67,
-		condition: "Like New",
-		category: "Electronics",
-	},
-	{
-		id: "4",
-		title: "Vintage Leather Jacket - Brown Medium",
-		price: 85,
-		originalPrice: 150,
-		image: "/vintage-brown-leather-jacket.png",
-		seller: "VintageStyle",
-		rating: 4.6,
-		reviewCount: 43,
-		condition: "Good",
-		category: "Fashion",
-	},
-	{
-		id: "5",
-		title: "PlayStation 5 Console + Controller",
-		price: 450,
-		originalPrice: 499,
-		image: "/playstation-5-console-white.png",
-		seller: "GameCentral",
-		rating: 4.9,
-		reviewCount: 156,
-		condition: "Like New",
-		category: "Electronics",
-	},
-	{
-		id: "6",
-		title: "Designer Handbag - Louis Vuitton Style",
-		price: 120,
-		originalPrice: 200,
-		image: "/designer-handbag-luxury-brown.png",
-		seller: "LuxuryFinds",
-		rating: 4.5,
-		reviewCount: 78,
-		condition: "Good",
-		category: "Fashion",
-	},
-];
+
+// Removed mockProducts, now using ProductsContext
 
 const CategoryFilter = ({ onCategoryChange }) => {
 	const categories = ["All", "Electronics", "Fashion", "Home & Garden", "Sports", "Books", "Toys", "Automotive", "Health & Beauty"];
@@ -196,35 +127,29 @@ const Footer = () => (
 );
 
 export default function HomePage({ products = [], cartItems, setCartItems, cartOpen, setCartOpen, wishlistItems, setWishlistItems, onAddToWishlist }) {
-	const [filteredProducts, setFilteredProducts] = useState(mockProducts);
-	const [activeCategory, setActiveCategory] = useState("All");
-	const navigate = useNavigate();
+		 const { filteredProducts, category, setCategory, loading, error } = useProducts();
+		 const navigate = useNavigate();
 
-	const handleCategoryChange = (category) => {
-		setActiveCategory(category);
-		if (category === "All") {
-			setFilteredProducts(mockProducts);
-		} else {
-			setFilteredProducts(mockProducts.filter((product) => product.category === category));
-		}
-	};
+		 const handleCategoryChange = (cat) => {
+			 setCategory(cat === "All" ? "all" : cat);
+		 };
 
-	const handleAddToCart = (product) => {
-		setCartItems((prev) => {
-			const existing = prev.find((item) => item.id === product.id);
-			if (existing) {
-				return prev.map((item) =>
-					item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-				);
-			} else {
-				return [...prev, { ...product, quantity: 1 }];
-			}
-		});
-		setCartOpen(true);
-	};
+		 const handleAddToCart = (product) => {
+			 setCartItems((prev) => {
+				 const existing = prev.find((item) => item.id === product.id);
+				 if (existing) {
+					 return prev.map((item) =>
+						 item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+					 );
+				 } else {
+					 return [...prev, { ...product, quantity: 1 }];
+				 }
+			 });
+			 setCartOpen(true);
+		 };
 
-	return (
-		<div className="app-container">
+		 return (
+			 <div className="app-container">
 			
 			{/* CartSidebar is now rendered in App.jsx */}
 			{/* Hero Section */}
@@ -285,17 +210,22 @@ export default function HomePage({ products = [], cartItems, setCartItems, cartO
 					<div className="products-filter">
 						<CategoryFilter onCategoryChange={handleCategoryChange} />
 					</div>
-					<div className="products-grid">
-						{filteredProducts.map((product) => (
-							<ProductCard key={product.id} {...product} onAddToCart={() => handleAddToCart(product)} onAddToWishlist={() => onAddToWishlist(product)} />
-						))}
-					</div>
-					{filteredProducts.length === 0 && (
-						<div className="no-products">
-							<p className="no-products-text">No products found in this category.</p>
-							<button className="secondary-btn-sm" onClick={() => handleCategoryChange("All")}>View All Products</button>
-						</div>
-					)}
+										 <div className="products-grid">
+											 {loading ? (
+												 <p>Loading products...</p>
+											 ) : error ? (
+												 <p className="no-products-text">{error}</p>
+											 ) : filteredProducts.length > 0 ? (
+												 filteredProducts.map((product) => (
+													 <ProductCard key={product.id || product._id} {...product} onAddToCart={() => handleAddToCart(product)} onAddToWishlist={() => onAddToWishlist(product)} />
+												 ))
+											 ) : (
+												 <div className="no-products">
+													 <p className="no-products-text">No products found in this category.</p>
+													 <button className="secondary-btn-sm" onClick={() => handleCategoryChange("All")}>View All Products</button>
+												 </div>
+											 )}
+										 </div>
 				</div>
 			</section>
 			<Footer />

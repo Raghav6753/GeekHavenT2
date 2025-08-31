@@ -326,7 +326,6 @@ export default function SellPage() {
               </div>
             </div>
 
-            {/* Submit */}
             <div className="submit-buttons">
               <button type="submit" className="list-item-btn">
                 List Item
