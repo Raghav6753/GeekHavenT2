@@ -1,0 +1,370 @@
+:root {
+  --primary: #d40000;
+  --primary-hover: #bb0000;
+  --background-light: #ffffff;
+  --background-medium: #f5f5f5;
+  --text-color: #1c1c1c;
+  --muted-text: #6b7280;
+  --border-color: #e2e8f0;
+  --accent: #f8e8e8;
+  --red-heart: #ef4444;
+  --yellow-star: #facc15; /* Added for star icons */
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-light);
+  color: var(--text-color);
+}
+
+/* Page Container */
+.wishlist-page-container {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Empty State Styles (unchanged from previous response) */
+.wishlist-empty-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  padding-top: 4rem;
+}
+
+.wishlist-empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 32rem;
+}
+
+.wishlist-empty-icon {
+  height: 6rem;
+  width: 6rem;
+  color: var(--muted-text);
+  margin-bottom: 1.5rem;
+}
+
+.wishlist-empty-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.wishlist-empty-text {
+  color: var(--muted-text);
+  margin-bottom: 2rem;
+}
+
+.wishlist-empty-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.browse-products-btn,
+.go-back-btn {
+  height: 3rem;
+  padding: 0 2rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.browse-products-btn {
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+}
+
+.browse-products-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.go-back-btn {
+  background: none;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.go-back-btn:hover {
+  background-color: var(--background-medium);
+  border-color: var(--text-color);
+}
+
+/* Populated State Header */
+.wishlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.wishlist-full-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.wishlist-item-count {
+  color: var(--muted-text);
+}
+
+.wishlist-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.clear-all-btn, .wishlist-back-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-all-btn:hover, .wishlist-back-btn:hover {
+  background-color: var(--background-medium);
+}
+
+.wishlist-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Product Card Styling (Adjusted to match the provided image) */
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column by default */
+  gap: 1.5rem;
+  justify-items: center; /* Center the card horizontally */
+}
+
+@media (min-width: 640px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on small screens */
+  }
+}
+
+@media (min-width: 1024px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 columns on medium screens */
+  }
+}
+
+@media (min-width: 1280px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(4, 1fr); /* 4 columns on large screens */
+  }
+}
+
+
+/* Styling for ProductCard component to match the image */
+.product-card-container {
+  position: relative;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-light);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.15s;
+  width: 100%; /* Ensure it takes full width of its grid column */
+  max-width: 20rem; /* Limiting max width to make it appear smaller as in the image */
+}
+
+.product-card-container:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.product-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 75%; /* Aspect ratio 4:3 */
+  overflow: hidden;
+}
+
+.product-card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.product-card-container:hover .product-card-image {
+  transform: scale(1.05);
+}
+
+.product-card-discount-badge, .product-card-condition-badge {
+  position: absolute;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  white-space: nowrap; /* Prevent text wrap */
+}
+
+.product-card-discount-badge {
+  top: 0.5rem;
+  left: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+.product-card-condition-badge {
+  bottom: 0.5rem;
+  left: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: var(--text-color);
+}
+
+.product-card-favorite-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0.375rem;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.product-card-favorite-btn:hover {
+  background-color: #fff;
+}
+
+.product-card-icon {
+  height: 1rem;
+  width: 1rem;
+  color: var(--red-heart); /* Filled heart color */
+  fill: var(--red-heart); /* Ensure heart is filled */
+}
+
+.product-card-details {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* Reduced gap for more compact look */
+}
+
+.product-card-id {
+  font-size: 0.875rem;
+  color: var(--muted-text);
+}
+
+.product-card-title {
+  font-weight: 600;
+  font-size: 1rem; /* Slightly smaller title */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-card-rating {
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--muted-text);
+}
+
+.product-card-rating-stars {
+  display: flex;
+  align-items: center;
+}
+
+.product-card-star-icon {
+  height: 0.75rem;
+  width: 0.75rem;
+  color: var(--yellow-star); /* Star color */
+  fill: var(--yellow-star); /* Ensure star is filled */
+}
+
+.product-card-rating-value {
+  margin-left: 0.25rem;
+  font-weight: 500;
+}
+
+.product-card-review-count {
+  font-size: 0.75rem;
+}
+
+.product-card-seller {
+  font-size: 0.75rem; /* Smaller seller text */
+  color: var(--muted-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-card-pricing {
+  margin-top: 0.75rem; /* Increased margin for spacing */
+  display: flex;
+  align-items: baseline; /* Align prices at the bottom */
+  justify-content: space-between;
+}
+
+.product-card-price {
+  font-size: 1.125rem; /* Smaller main price */
+  font-weight: 700;
+  color: var(--text-color); /* Changed to text-color as in image */
+}
+
+.product-card-original-price {
+  font-size: 0.75rem; /* Smaller original price */
+  color: var(--muted-text);
+  text-decoration: line-through;
+  margin-left: 0.5rem;
+}
+
+.product-card-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem; /* Fixed width for the add button icon */
+  height: 2.5rem; /* Fixed height for the add button icon */
+  border-radius: 9999px; /* Circular button */
+  background-color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+  border: none;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.product-card-add-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.product-card-add-icon {
+  height: 1rem;
+  width: 1rem;
+}

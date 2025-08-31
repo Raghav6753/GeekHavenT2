@@ -1,0 +1,134 @@
+:root {
+  --primary: #d40000;
+  --text-color: #1c1c1c;
+  --muted-text: #6b7280;
+  --border-color: #e2e8f0;
+  --background-light: #ffffff;
+  --background-medium: #f5f5f5;
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.navbar-header {
+  background-color: var(--background-light);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  padding: 1rem 0;
+}
+
+.navbar-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar-logo-btn {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.navbar-search-container {
+  position: relative;
+  flex-grow: 1;
+  max-width: 500px;
+}
+
+.navbar-search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted-text);
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.navbar-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-light);
+  color: var(--text-color);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.navbar-search-input:focus {
+  border-color: var(--primary);
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  color: var(--muted-text);
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navbar-action-btn:hover {
+  color: var(--primary);
+}
+
+.navbar-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.sell-btn {
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: var(--text-color);
+  background-color: var(--background-medium);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sell-btn:hover {
+  background-color: var(--background-light);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar-search-container {
+    display: none;
+  }
+
+  .navbar-left {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar-right .sell-btn {
+    display: none;
+  }
+}
