@@ -66,7 +66,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
           <>
             <div className="cart-items-list">
               <div className="cart-items-scroll">
-                {cartItems.map((item, idx) => (
+                {cartItems?.map((item, idx) => (
                     <div key={(item.id || item._id || idx) + '-' + idx} className="cart-item">
                     <img
                       src={item.image || "/placeholder.svg"}
@@ -77,7 +77,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                       <h4 className="cart-item-title">{item.title} <span className="cart-item-id">#{(item.id || item._id) + checksumForId(item.id || item._id)}</span></h4>
                       <p className="cart-item-seller">by {typeof item.seller === 'object' && item.seller !== null ? item.seller.name : item.seller}</p>
                       <div className="cart-item-actions">
-                        <span className="cart-item-price">${item.price.toFixed(2)}</span>
+                        <span className="cart-item-price">${item.price?.toFixed(2)}</span>
                         <div className="quantity-controls">
                           <button
                             className="quantity-btn"
@@ -106,11 +106,11 @@ const CartSidebar = ({ isOpen, onClose }) => {
             <div className="cart-summary">
               <div className="summary-row">
                 <span>Subtotal</span>
-                <span>${totals.subtotal.toFixed(2)}</span>
+                <span>${totals.subtotal?.toFixed(2)}</span>
               </div>
               <div className="summary-row">
                 <span>Platform Fee ({Math.round(platformFeeRate * 100)}%)</span>
-                <span>${totals.platformFee.toFixed(2)}</span>
+                <span>${totals.platformFee?.toFixed(2)}</span>
               </div>
               <div className="summary-row">
                 <span>Shipping</span>
@@ -119,7 +119,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
               <div className="summary-separator" />
               <div className="summary-row total-row">
                 <span>Total</span>
-                <span>${totals.total.toFixed(2)}</span>
+                <span>${totals.total?.toFixed(2)}</span>
               </div>
               <div className="checkout-buttons">
                 <button className="view-cart-btn">View Cart</button>

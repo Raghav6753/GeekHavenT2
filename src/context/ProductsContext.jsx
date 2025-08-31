@@ -31,9 +31,9 @@ export function ProductsProvider({ children }) {
   };
 
   const filteredProducts =
-    category === "all"
+    !category || category.toLowerCase() === "all"
       ? products
-      : products.filter((p) => p.category === category);
+      : products.filter((p) => (p.category || "").toLowerCase() === category.toLowerCase());
 
   return (
     <ProductsContext.Provider
